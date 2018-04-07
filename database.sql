@@ -240,6 +240,7 @@ DROP TABLE IF EXISTS `film_copy`;
 CREATE TABLE `film_copy` (
   `filmCopyID` int(11) NOT NULL AUTO_INCREMENT,
   `filmId` int(11) NOT NULL,
+  `rentedOut` tinyint(4) DEFAULT NULL,
   PRIMARY KEY (`filmCopyID`),
   KEY `filmId_idx` (`filmId`),
   CONSTRAINT `filmId` FOREIGN KEY (`filmId`) REFERENCES `film` (`filmID`) ON DELETE NO ACTION ON UPDATE NO ACTION
@@ -252,7 +253,7 @@ CREATE TABLE `film_copy` (
 
 LOCK TABLES `film_copy` WRITE;
 /*!40000 ALTER TABLE `film_copy` DISABLE KEYS */;
-INSERT INTO `film_copy` VALUES (1,1),(2,1),(3,1),(4,2),(5,2),(6,3),(7,3),(8,4),(9,4),(10,5),(11,5),(12,5),(13,6),(14,6),(15,7),(16,7),(17,8),(18,8),(19,8),(20,9),(21,9),(22,9),(23,10),(24,10),(25,10);
+INSERT INTO `film_copy` VALUES (1,1,NULL),(2,1,NULL),(3,1,NULL),(4,2,NULL),(5,2,NULL),(6,3,NULL),(7,3,NULL),(8,4,NULL),(9,4,NULL),(10,5,NULL),(11,5,NULL),(12,5,NULL),(13,6,NULL),(14,6,NULL),(15,7,NULL),(16,7,NULL),(17,8,NULL),(18,8,NULL),(19,8,NULL),(20,9,NULL),(21,9,NULL),(22,9,NULL),(23,10,NULL),(24,10,NULL),(25,10,NULL);
 /*!40000 ALTER TABLE `film_copy` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -557,4 +558,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-04-07 15:53:26
+-- Dump completed on 2018-04-07 17:02:10
