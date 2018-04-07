@@ -311,6 +311,28 @@ INSERT INTO `film_genre` VALUES (1,1),(1,2),(1,3),(2,2),(2,1),(3,2),(3,1),(4,2),
 UNLOCK TABLES;
 
 --
+-- Temporary view structure for view `films`
+--
+
+DROP TABLE IF EXISTS `films`;
+/*!50001 DROP VIEW IF EXISTS `films`*/;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+/*!50001 CREATE VIEW `films` AS SELECT 
+ 1 AS `filmID`,
+ 1 AS `numFilmCopys`,
+ 1 AS `filmName`,
+ 1 AS `info`,
+ 1 AS `length`,
+ 1 AS `publishingYear`,
+ 1 AS `pGLevel`,
+ 1 AS `priceEach`,
+ 1 AS `directors`,
+ 1 AS `actors`,
+ 1 AS `genre`*/;
+SET character_set_client = @saved_cs_client;
+
+--
 -- Table structure for table `genre`
 --
 
@@ -360,6 +382,19 @@ LOCK TABLES `late_fee` WRITE;
 INSERT INTO `late_fee` VALUES (3,10,'2018-03-19',1),(6,10,'2018-03-23',2);
 /*!40000 ALTER TABLE `late_fee` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Temporary view structure for view `num_film_copys`
+--
+
+DROP TABLE IF EXISTS `num_film_copys`;
+/*!50001 DROP VIEW IF EXISTS `num_film_copys`*/;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+/*!50001 CREATE VIEW `num_film_copys` AS SELECT 
+ 1 AS `filmId`,
+ 1 AS `numFilmCopys`*/;
+SET character_set_client = @saved_cs_client;
 
 --
 -- Table structure for table `payment`
@@ -447,6 +482,42 @@ LOCK TABLES `rental_payment` WRITE;
 INSERT INTO `rental_payment` VALUES (1,1),(1,2),(2,3),(3,4),(4,5),(5,6),(6,7),(7,8),(8,9),(8,10),(9,11);
 /*!40000 ALTER TABLE `rental_payment` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Final view structure for view `films`
+--
+
+/*!50001 DROP VIEW IF EXISTS `films`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8 */;
+/*!50001 SET character_set_results     = utf8 */;
+/*!50001 SET collation_connection      = utf8_general_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
+/*!50001 VIEW `films` AS select `film`.`filmID` AS `filmID`,`num_film_copys`.`numFilmCopys` AS `numFilmCopys`,`film`.`filmName` AS `filmName`,`film`.`info` AS `info`,`film`.`length` AS `length`,`film`.`publishingYear` AS `publishingYear`,`film`.`pgLevel` AS `pGLevel`,`film`.`priceEach` AS `priceEach`,group_concat(distinct `director`.`dName` separator ',') AS `directors`,group_concat(distinct `actor`.`aName` separator ',') AS `actors`,group_concat(distinct `genre`.`gName` separator ',') AS `genre` from (((((((`film` join `film_director` on((`film`.`filmID` = `film_director`.`filmId`))) join `director` on((`film_director`.`directorId` = `director`.`directorID`))) join `film_actor` on((`film`.`filmID` = `film_actor`.`filmId`))) join `actor` on((`film_actor`.`actorId` = `actor`.`actorID`))) join `film_genre` on((`film`.`filmID` = `film_genre`.`filmId`))) join `genre` on((`film_genre`.`genreId` = `genre`.`genreID`))) join `num_film_copys` on((`num_film_copys`.`filmId` = `film`.`filmID`))) group by `film`.`filmID` */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
+
+--
+-- Final view structure for view `num_film_copys`
+--
+
+/*!50001 DROP VIEW IF EXISTS `num_film_copys`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8 */;
+/*!50001 SET character_set_results     = utf8 */;
+/*!50001 SET collation_connection      = utf8_general_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
+/*!50001 VIEW `num_film_copys` AS select `film_copy`.`filmId` AS `filmId`,count(0) AS `numFilmCopys` from `film_copy` group by `film_copy`.`filmId` */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -457,4 +528,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-04-06 21:48:36
+-- Dump completed on 2018-04-07 12:51:04
