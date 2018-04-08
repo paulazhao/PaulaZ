@@ -385,7 +385,6 @@ CREATE TABLE `late_fee` (
   `rentalId` int(11) NOT NULL,
   `feeEachDay` double DEFAULT NULL,
   `lFDate` date NOT NULL,
-  `daysLate` int(11) DEFAULT NULL,
   PRIMARY KEY (`lFPayID`),
   KEY `rentalId_idx` (`rentalId`),
   CONSTRAINT `rentalId` FOREIGN KEY (`rentalId`) REFERENCES `rental` (`rentalID`) ON DELETE NO ACTION ON UPDATE NO ACTION
@@ -398,7 +397,7 @@ CREATE TABLE `late_fee` (
 
 LOCK TABLES `late_fee` WRITE;
 /*!40000 ALTER TABLE `late_fee` DISABLE KEYS */;
-INSERT INTO `late_fee` VALUES (1,3,10,'2018-03-19',1),(2,6,10,'2018-03-23',2);
+INSERT INTO `late_fee` VALUES (1,3,10,'2018-03-19'),(2,6,10,'2018-03-23');
 /*!40000 ALTER TABLE `late_fee` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -594,4 +593,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-04-08 13:25:47
+-- Dump completed on 2018-04-08 14:09:48
