@@ -381,13 +381,15 @@ DROP TABLE IF EXISTS `late_fee`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `late_fee` (
+  `lFPayID` int(11) NOT NULL AUTO_INCREMENT,
   `rentalId` int(11) NOT NULL,
   `feeEachDay` double DEFAULT NULL,
   `lFDate` date NOT NULL,
   `daysLate` int(11) DEFAULT NULL,
+  PRIMARY KEY (`lFPayID`),
   KEY `rentalId_idx` (`rentalId`),
   CONSTRAINT `rentalId` FOREIGN KEY (`rentalId`) REFERENCES `rental` (`rentalID`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_swedish_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_swedish_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -396,7 +398,7 @@ CREATE TABLE `late_fee` (
 
 LOCK TABLES `late_fee` WRITE;
 /*!40000 ALTER TABLE `late_fee` DISABLE KEYS */;
-INSERT INTO `late_fee` VALUES (3,10,'2018-03-19',1),(6,10,'2018-03-23',2);
+INSERT INTO `late_fee` VALUES (1,3,10,'2018-03-19',1),(2,6,10,'2018-03-23',2);
 /*!40000 ALTER TABLE `late_fee` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -458,7 +460,7 @@ CREATE TABLE `rental` (
   CONSTRAINT `customerId` FOREIGN KEY (`customerId`) REFERENCES `customer` (`customerID`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `employeeId` FOREIGN KEY (`employeeId`) REFERENCES `employee` (`employeeID`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `filmCopyId` FOREIGN KEY (`filmCopyId`) REFERENCES `film_copy` (`filmCopyID`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_swedish_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_swedish_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -467,7 +469,7 @@ CREATE TABLE `rental` (
 
 LOCK TABLES `rental` WRITE;
 /*!40000 ALTER TABLE `rental` DISABLE KEYS */;
-INSERT INTO `rental` VALUES (1,1,7,5,'2018-03-09',50),(2,14,7,5,'2018-03-09',40),(3,4,4,10,'2018-03-12',50),(4,5,2,4,'2018-03-12',50),(5,15,3,6,'2018-03-14',40),(6,17,1,8,'2018-03-15',50),(7,20,6,7,'2018-03-16',50),(8,18,8,9,'2018-03-19',50),(9,21,8,9,'2018-03-20',50),(10,23,8,9,'2018-03-20',50),(11,2,5,5,'2018-03-21',50);
+INSERT INTO `rental` VALUES (1,1,7,5,'2018-03-09',50),(2,14,7,5,'2018-03-09',40),(3,4,4,10,'2018-03-12',50),(4,5,2,4,'2018-03-12',50),(5,15,3,6,'2018-03-14',40),(6,17,1,8,'2018-03-15',50),(7,20,6,7,'2018-03-16',50),(8,18,8,9,'2018-03-19',50),(9,21,8,9,'2018-03-20',50),(10,23,8,9,'2018-03-20',50),(11,2,5,5,'2018-03-21',50),(12,5,9,8,'2018-03-30',50),(13,7,9,8,'2018-03-30',50),(14,17,10,5,'2018-04-02',50),(15,15,10,4,'2018-04-06',40),(16,1,3,7,'2018-04-06',50);
 /*!40000 ALTER TABLE `rental` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -592,4 +594,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-04-08 10:14:27
+-- Dump completed on 2018-04-08 13:25:47
