@@ -334,6 +334,22 @@ SET character_set_client = utf8;
 SET character_set_client = @saved_cs_client;
 
 --
+-- Temporary view structure for view `films_rented_out`
+--
+
+DROP TABLE IF EXISTS `films_rented_out`;
+/*!50001 DROP VIEW IF EXISTS `films_rented_out`*/;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+/*!50001 CREATE VIEW `films_rented_out` AS SELECT 
+ 1 AS `rentedOut`,
+ 1 AS `filmCopyID`,
+ 1 AS `customer`,
+ 1 AS `employee`,
+ 1 AS `rDate`*/;
+SET character_set_client = @saved_cs_client;
+
+--
 -- Table structure for table `genre`
 --
 
@@ -532,6 +548,24 @@ DELIMITER ;
 /*!50001 SET collation_connection      = @saved_col_connection */;
 
 --
+-- Final view structure for view `films_rented_out`
+--
+
+/*!50001 DROP VIEW IF EXISTS `films_rented_out`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8 */;
+/*!50001 SET character_set_results     = utf8 */;
+/*!50001 SET collation_connection      = utf8_general_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
+/*!50001 VIEW `films_rented_out` AS select `film_copy`.`rentedOut` AS `rentedOut`,`film_copy`.`filmCopyID` AS `filmCopyID`,`customer`.`cName` AS `customer`,`employee`.`eName` AS `employee`,`rental`.`rDate` AS `rDate` from (((`film_copy` join `rental` on((`film_copy`.`filmCopyID` = `rental`.`filmCopyId`))) join `customer` on((`rental`.`customerId` = `customer`.`customerID`))) join `employee` on((`rental`.`employeeId` = `employee`.`employeeID`))) order by `rental`.`rDate` */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
+
+--
 -- Final view structure for view `num_film_copys`
 --
 
@@ -558,4 +592,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-04-07 17:02:10
+-- Dump completed on 2018-04-08 10:14:27
