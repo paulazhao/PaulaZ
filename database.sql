@@ -402,6 +402,24 @@ INSERT INTO `late_fee` VALUES (1,3,10,'2018-03-19'),(2,6,10,'2018-03-23');
 UNLOCK TABLES;
 
 --
+-- Temporary view structure for view `late_films`
+--
+
+DROP TABLE IF EXISTS `late_films`;
+/*!50001 DROP VIEW IF EXISTS `late_films`*/;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+/*!50001 CREATE VIEW `late_films` AS SELECT 
+ 1 AS `filmCopyId`,
+ 1 AS `filmName`,
+ 1 AS `customer`,
+ 1 AS `customerID`,
+ 1 AS `email`,
+ 1 AS `rDate`,
+ 1 AS `returned`*/;
+SET character_set_client = @saved_cs_client;
+
+--
 -- Temporary view structure for view `num_film_copys`
 --
 
@@ -568,6 +586,24 @@ DELIMITER ;
 /*!50001 SET collation_connection      = @saved_col_connection */;
 
 --
+-- Final view structure for view `late_films`
+--
+
+/*!50001 DROP VIEW IF EXISTS `late_films`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8 */;
+/*!50001 SET character_set_results     = utf8 */;
+/*!50001 SET collation_connection      = utf8_general_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
+/*!50001 VIEW `late_films` AS select `rental`.`filmCopyId` AS `filmCopyId`,`film`.`filmName` AS `filmName`,`customer`.`cName` AS `customer`,`customer`.`customerID` AS `customerID`,`customer`.`email` AS `email`,`rental`.`rDate` AS `rDate`,`rental`.`returned` AS `returned` from (((`rental` join `film_copy` on((`film_copy`.`filmCopyID` = `rental`.`filmCopyId`))) join `film` on((`film`.`filmID` = `film_copy`.`filmId`))) join `customer` on((`customer`.`customerID` = `rental`.`customerId`))) where ((`film_copy`.`rentedOut` = 1) and ((curdate() - `rental`.`rDate`) > 4) and (`rental`.`returned` = 0)) order by `rental`.`rDate` */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
+
+--
 -- Final view structure for view `num_film_copys`
 --
 
@@ -594,4 +630,8 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
+<<<<<<< HEAD
 -- Dump completed on 2018-04-08 19:00:50
+=======
+-- Dump completed on 2018-04-09 20:32:32
+>>>>>>> feature/Question_4,_late_films_view
