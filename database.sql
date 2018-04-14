@@ -521,6 +521,20 @@ INSERT INTO `rental_payment` VALUES (1,1),(1,2),(2,3),(3,4),(4,5),(5,6),(6,7),(7
 UNLOCK TABLES;
 
 --
+-- Temporary view structure for view `rentals_per_employee`
+--
+
+DROP TABLE IF EXISTS `rentals_per_employee`;
+/*!50001 DROP VIEW IF EXISTS `rentals_per_employee`*/;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+/*!50001 CREATE VIEW `rentals_per_employee` AS SELECT 
+ 1 AS `employeeId`,
+ 1 AS `eName`,
+ 1 AS `rentals`*/;
+SET character_set_client = @saved_cs_client;
+
+--
 -- Dumping routines for database 'paulazfilm'
 --
 /*!50003 DROP PROCEDURE IF EXISTS `movies_in_genre` */;
@@ -620,6 +634,24 @@ DELIMITER ;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
 /*!50001 SET collation_connection      = @saved_col_connection */;
+
+--
+-- Final view structure for view `rentals_per_employee`
+--
+
+/*!50001 DROP VIEW IF EXISTS `rentals_per_employee`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8 */;
+/*!50001 SET character_set_results     = utf8 */;
+/*!50001 SET collation_connection      = utf8_general_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
+/*!50001 VIEW `rentals_per_employee` AS select `rental`.`employeeId` AS `employeeId`,`employee`.`eName` AS `eName`,count(0) AS `rentals` from (`rental` join `employee` on((`rental`.`employeeId` = `employee`.`employeeID`))) group by `rental`.`employeeId` order by `rentals` desc */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -630,8 +662,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
-<<<<<<< HEAD
--- Dump completed on 2018-04-08 19:00:50
-=======
--- Dump completed on 2018-04-09 20:32:32
->>>>>>> feature/Question_4,_late_films_view
+-- Dump completed on 2018-04-14 10:52:23
