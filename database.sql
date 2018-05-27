@@ -253,7 +253,7 @@ CREATE TABLE `film_copy` (
 
 LOCK TABLES `film_copy` WRITE;
 /*!40000 ALTER TABLE `film_copy` DISABLE KEYS */;
-INSERT INTO `film_copy` VALUES (1,1,1),(2,1,0),(3,1,0),(4,2,0),(5,2,1),(6,3,0),(7,3,1),(8,4,NULL),(9,4,NULL),(10,5,NULL),(11,5,NULL),(12,5,NULL),(13,6,NULL),(14,6,NULL),(15,7,NULL),(16,7,NULL),(17,8,NULL),(18,8,NULL),(19,8,NULL),(20,9,NULL),(21,9,NULL),(22,9,NULL),(23,10,NULL),(24,10,NULL),(25,10,NULL);
+INSERT INTO `film_copy` VALUES (1,1,1),(2,1,1),(3,1,1),(4,2,0),(5,2,1),(6,3,0),(7,3,1),(8,4,0),(9,4,0),(10,5,0),(11,5,0),(12,5,0),(13,6,0),(14,6,0),(15,7,1),(16,7,0),(17,8,1),(18,8,0),(19,8,0),(20,9,1),(21,9,0),(22,9,0),(23,10,0),(24,10,1),(25,10,0);
 /*!40000 ALTER TABLE `film_copy` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -383,7 +383,6 @@ DROP TABLE IF EXISTS `late_fee`;
 CREATE TABLE `late_fee` (
   `lFPayID` int(11) NOT NULL AUTO_INCREMENT,
   `rentalId` int(11) NOT NULL,
-  `feeEachDay` double DEFAULT NULL,
   `lFDate` date NOT NULL,
   PRIMARY KEY (`lFPayID`),
   KEY `rentalId_idx` (`rentalId`),
@@ -397,7 +396,7 @@ CREATE TABLE `late_fee` (
 
 LOCK TABLES `late_fee` WRITE;
 /*!40000 ALTER TABLE `late_fee` DISABLE KEYS */;
-INSERT INTO `late_fee` VALUES (1,3,10,'2018-03-19'),(2,6,10,'2018-03-23');
+INSERT INTO `late_fee` VALUES (1,3,'2018-03-19'),(2,6,'2018-03-23');
 /*!40000 ALTER TABLE `late_fee` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -469,8 +468,7 @@ CREATE TABLE `rental` (
   `customerId` int(11) NOT NULL,
   `employeeId` int(11) NOT NULL,
   `rDate` date NOT NULL,
-  `price` double NOT NULL,
-  `returned` tinyint(4) DEFAULT NULL,
+  `returned` tinyint(4) NOT NULL,
   PRIMARY KEY (`rentalID`),
   KEY `filmCopyId_idx` (`filmCopyId`),
   KEY `customerId_idx` (`customerId`),
@@ -478,7 +476,7 @@ CREATE TABLE `rental` (
   CONSTRAINT `customerId` FOREIGN KEY (`customerId`) REFERENCES `customer` (`customerID`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `employeeId` FOREIGN KEY (`employeeId`) REFERENCES `employee` (`employeeID`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `filmCopyId` FOREIGN KEY (`filmCopyId`) REFERENCES `film_copy` (`filmCopyID`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_swedish_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_swedish_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -487,7 +485,7 @@ CREATE TABLE `rental` (
 
 LOCK TABLES `rental` WRITE;
 /*!40000 ALTER TABLE `rental` DISABLE KEYS */;
-INSERT INTO `rental` VALUES (1,1,7,5,'2018-03-09',50,1),(2,14,7,5,'2018-03-09',40,1),(3,4,4,10,'2018-03-12',50,1),(4,5,2,4,'2018-03-12',50,1),(5,15,3,6,'2018-03-14',40,1),(6,17,1,8,'2018-03-15',50,1),(7,20,6,7,'2018-03-16',50,1),(8,18,8,9,'2018-03-19',50,1),(9,21,8,9,'2018-03-20',50,1),(10,23,8,9,'2018-03-20',50,1),(11,2,5,5,'2018-03-21',50,1),(12,5,9,8,'2018-03-30',50,0),(13,7,9,8,'2018-03-30',50,0),(14,17,10,5,'2018-04-02',50,0),(15,15,10,4,'2018-04-06',40,0),(16,1,3,7,'2018-04-06',50,0);
+INSERT INTO `rental` VALUES (1,1,7,5,'2018-03-09',1),(2,14,7,5,'2018-03-09',1),(3,4,4,10,'2018-03-12',1),(4,5,2,4,'2018-03-12',1),(5,15,3,6,'2018-03-14',1),(6,17,1,8,'2018-03-15',1),(7,20,6,7,'2018-03-16',1),(8,18,8,9,'2018-03-19',1),(9,21,8,9,'2018-03-20',1),(10,23,8,9,'2018-03-20',1),(11,2,5,5,'2018-03-21',1),(12,5,9,8,'2018-03-30',0),(13,7,9,8,'2018-03-30',0),(14,17,10,5,'2018-04-02',0),(15,15,10,4,'2018-04-06',0),(16,1,3,7,'2018-04-06',0),(17,2,7,6,'2018-05-20',0),(18,24,2,7,'2018-05-25',0),(19,20,7,6,'2018-05-27',0),(20,3,7,6,'2018-05-27',0);
 /*!40000 ALTER TABLE `rental` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -562,13 +560,75 @@ SET character_set_client = @saved_cs_client;
 DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `movies_in_genre`(IN theGenre VARCHAR(45))
 BEGIN
-SELECT genre.gName,
+SELECT
 GROUP_CONCAT(DISTINCT film.filmName) AS filmName
 FROM film
 JOIN film_genre ON film.filmID = film_genre.filmId
 JOIN genre ON film_genre.genreId = genre.genreID
 WHERE gName = theGenre
-GROUP BY genre.gName;
+GROUP BY film.filmName;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `rentals_each_customer` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `rentals_each_customer`(theCustomerID INT(11))
+BEGIN
+SELECT film_copy.rentedOut AS rentedOut, rental.rentalID AS rentalID, film_copy.filmCopyID AS filmCopyID,
+	customer.cName AS customer, employee.employeeID AS employeeID, employee.eName AS employee,
+    rental.rDate AS rDate
+FROM (((film_copy JOIN rental ON ((film_copy.filmCopyID = rental.filmCopyId)))
+	JOIN customer ON ((rental.customerId = customer.customerID)))
+	JOIN employee ON ((rental.employeeId = employee.employeeID)))
+WHERE rental.customerId = theCustomerID;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `rent_out_film` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `rent_out_film`(IN theFilmCopyID INT(11), IN thisCustomerID INT(11),
+IN thisEmployeeID INT(11), OUT message VARCHAR(45))
+BEGIN
+DECLARE FilmCopyID INT(11);
+DECLARE RentedOut TINYINT(4);
+
+SELECT film_copy.filmCopyID, film_copy.rentedOut
+	INTO FilmCopyID, RentedOut
+	FROM film_copy
+    WHERE film_copy.filmCopyID = theFilmCopyID;
+    
+IF FilmCopyID = theFilmCopyID AND RentedOut = 1
+	THEN SET message = 'The film is rented out!';
+ELSE IF FilmCopyID = theFilmCopyID AND RentedOut = 0
+	THEN INSERT INTO rental (filmCopyId, customerId, employeeId, rDate, returned)
+		VALUES (theFilmCopyID, thisCustomerID, thisEmployeeID, CURDATE(), 0);
+	UPDATE film_copy SET rentedOut = 1 WHERE film_copy.filmCopyID = theFilmCopyID;
+	SET message = 'You have completed the rental!';
+ELSE SET message = 'Oops! Something went wrong!';
+END IF;
+END IF;
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -607,7 +667,7 @@ DELIMITER ;
 /*!50001 SET collation_connection      = utf8_general_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
 /*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
-/*!50001 VIEW `films_rented_out` AS select `film_copy`.`rentedOut` AS `rentedOut`,`film_copy`.`filmCopyID` AS `filmCopyID`,`customer`.`cName` AS `customer`,`employee`.`eName` AS `employee`,`rental`.`rDate` AS `rDate` from (((`film_copy` join `rental` on((`film_copy`.`filmCopyID` = `rental`.`filmCopyId`))) join `customer` on((`rental`.`customerId` = `customer`.`customerID`))) join `employee` on((`rental`.`employeeId` = `employee`.`employeeID`))) order by `rental`.`rDate` */;
+/*!50001 VIEW `films_rented_out` AS select `film_copy`.`rentedOut` AS `rentedOut`,`film_copy`.`filmCopyID` AS `filmCopyID`,`customer`.`cName` AS `customer`,`employee`.`eName` AS `employee`,`rental`.`rDate` AS `rDate` from (((`film_copy` join `rental` on((`film_copy`.`filmCopyID` = `rental`.`filmCopyId`))) join `customer` on((`rental`.`customerId` = `customer`.`customerID`))) join `employee` on((`rental`.`employeeId` = `employee`.`employeeID`))) where ((`film_copy`.`rentedOut` = 1) and (`rental`.`returned` = 0)) order by `rental`.`rDate` */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
 /*!50001 SET collation_connection      = @saved_col_connection */;
@@ -693,4 +753,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-04-30 14:48:30
+-- Dump completed on 2018-05-27 17:33:26
