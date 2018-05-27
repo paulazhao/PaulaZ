@@ -253,7 +253,7 @@ CREATE TABLE `film_copy` (
 
 LOCK TABLES `film_copy` WRITE;
 /*!40000 ALTER TABLE `film_copy` DISABLE KEYS */;
-INSERT INTO `film_copy` VALUES (1,1,1),(2,1,1),(3,1,1),(4,2,0),(5,2,1),(6,3,0),(7,3,1),(8,4,0),(9,4,0),(10,5,0),(11,5,0),(12,5,0),(13,6,0),(14,6,0),(15,7,1),(16,7,0),(17,8,1),(18,8,0),(19,8,0),(20,9,1),(21,9,0),(22,9,0),(23,10,0),(24,10,1),(25,10,0);
+INSERT INTO `film_copy` VALUES (1,1,1),(2,1,1),(3,1,1),(4,2,0),(5,2,0),(6,3,0),(7,3,1),(8,4,0),(9,4,0),(10,5,0),(11,5,0),(12,5,0),(13,6,0),(14,6,0),(15,7,1),(16,7,0),(17,8,1),(18,8,0),(19,8,0),(20,9,0),(21,9,0),(22,9,0),(23,10,0),(24,10,1),(25,10,0);
 /*!40000 ALTER TABLE `film_copy` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -387,7 +387,7 @@ CREATE TABLE `late_fee` (
   PRIMARY KEY (`lFPayID`),
   KEY `rentalId_idx` (`rentalId`),
   CONSTRAINT `rentalId` FOREIGN KEY (`rentalId`) REFERENCES `rental` (`rentalID`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_swedish_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_swedish_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -396,7 +396,7 @@ CREATE TABLE `late_fee` (
 
 LOCK TABLES `late_fee` WRITE;
 /*!40000 ALTER TABLE `late_fee` DISABLE KEYS */;
-INSERT INTO `late_fee` VALUES (1,3,'2018-03-19'),(2,6,'2018-03-23');
+INSERT INTO `late_fee` VALUES (1,3,'2018-03-19'),(2,6,'2018-03-23'),(3,12,'2018-05-27');
 /*!40000 ALTER TABLE `late_fee` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -485,7 +485,7 @@ CREATE TABLE `rental` (
 
 LOCK TABLES `rental` WRITE;
 /*!40000 ALTER TABLE `rental` DISABLE KEYS */;
-INSERT INTO `rental` VALUES (1,1,7,5,'2018-03-09',1),(2,14,7,5,'2018-03-09',1),(3,4,4,10,'2018-03-12',1),(4,5,2,4,'2018-03-12',1),(5,15,3,6,'2018-03-14',1),(6,17,1,8,'2018-03-15',1),(7,20,6,7,'2018-03-16',1),(8,18,8,9,'2018-03-19',1),(9,21,8,9,'2018-03-20',1),(10,23,8,9,'2018-03-20',1),(11,2,5,5,'2018-03-21',1),(12,5,9,8,'2018-03-30',0),(13,7,9,8,'2018-03-30',0),(14,17,10,5,'2018-04-02',0),(15,15,10,4,'2018-04-06',0),(16,1,3,7,'2018-04-06',0),(17,2,7,6,'2018-05-20',0),(18,24,2,7,'2018-05-25',0),(19,20,7,6,'2018-05-27',0),(20,3,7,6,'2018-05-27',0);
+INSERT INTO `rental` VALUES (1,1,7,5,'2018-03-09',1),(2,14,7,5,'2018-03-09',1),(3,4,4,10,'2018-03-12',1),(4,5,2,4,'2018-03-12',1),(5,15,3,6,'2018-03-14',1),(6,17,1,8,'2018-03-15',1),(7,20,6,7,'2018-03-16',1),(8,18,8,9,'2018-03-19',1),(9,21,8,9,'2018-03-20',1),(10,23,8,9,'2018-03-20',1),(11,2,5,5,'2018-03-21',1),(12,5,9,8,'2018-03-30',1),(13,7,9,8,'2018-03-30',0),(14,17,10,5,'2018-04-02',0),(15,15,10,4,'2018-04-06',0),(16,1,3,7,'2018-04-06',0),(17,2,7,6,'2018-05-20',0),(18,24,2,7,'2018-05-25',0),(19,20,7,6,'2018-05-27',1),(20,3,7,6,'2018-05-27',0);
 /*!40000 ALTER TABLE `rental` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -584,6 +584,37 @@ DELIMITER ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP FUNCTION IF EXISTS `rental_price` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` FUNCTION `rental_price`(theRentalID INT(11)) RETURNS double
+BEGIN
+DECLARE FilmCopyID INT(11);
+DECLARE RentalID INT(11);
+DECLARE PriceEach DOUBLE;
+
+SELECT film_copy.filmCopyID, rental.rentalID, film.priceEach
+INTO FilmCopyID, RentalID, PriceEach FROM rental
+JOIN film_copy ON film_copy.filmCopyID = rental.filmCopyId
+JOIN film ON film_copy.filmId = film.filmID
+WHERE rental.rentalID = theRentalID;
+
+IF RentalID = theRentalID
+THEN RETURN PriceEach;
+END IF;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 /*!50003 DROP PROCEDURE IF EXISTS `movies_in_genre` */;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
@@ -663,6 +694,41 @@ ELSE IF FilmCopyID = theFilmCopyID AND RentedOut = 0
 	UPDATE film_copy SET rentedOut = 1 WHERE film_copy.filmCopyID = theFilmCopyID;
 	SET message = 'You have completed the rental!';
 ELSE SET message = 'Oops! Something went wrong!';
+END IF;
+END IF;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `return_film` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `return_film`(IN theRentalID INT(11),
+IN theFilmCopyID INT(11), IN thisCustomerID INT(11), OUT message VARCHAR(45))
+BEGIN
+DECLARE LateFilm VARCHAR(5);
+
+SELECT late_film(theFilmCopyID) INTO LateFilm;
+
+IF LateFilm = 'TRUE'
+	THEN UPDATE film_copy SET rentedOut = 0 WHERE film_copy.filmCopyID = theFilmCopyID;
+    UPDATE rental SET returned = 1 WHERE rental.rentalID = theRentalID;
+    INSERT INTO late_fee (rentalId, lFDate) VALUES (theRentalID, CURDATE());
+	SET message = 'The film is late and registered.';
+ELSE IF LateFilm = 'FALSE'
+	THEN UPDATE film_copy SET rentedOut = 0 WHERE film_copy.filmCopyID = theFilmCopyID;
+    UPDATE rental SET returned = 1 WHERE rental.rentalID = theRentalID;
+    SET message = 'The film is registered.';
+ELSE SET message = 'Is the film already returned?';
 END IF;
 END IF;
 END ;;
@@ -789,4 +855,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-05-27 18:42:39
+-- Dump completed on 2018-05-27 20:52:59
